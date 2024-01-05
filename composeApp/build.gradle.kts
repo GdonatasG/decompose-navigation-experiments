@@ -34,6 +34,7 @@ kotlin {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.decompose)
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -45,6 +46,7 @@ kotlin {
             implementation(libs.decompose)
             implementation(libs.decompose.jetbrains)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.koin.core)
         }
     }
 }

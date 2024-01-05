@@ -18,6 +18,7 @@ junit = "4.13.2"
 extensionsComposeJetbrains = "2.1.4-compose-experimental"
 decompose = "2.2.0-alpha03"
 kotlinxSerializationJson = "1.6.1"
+koin = "3.2.0"
 
 [libraries]
 decompose-jetbrains = { module = "com.arkivanov.decompose:extensions-compose-jetbrains", version.ref = "extensionsComposeJetbrains" }
@@ -38,6 +39,10 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }

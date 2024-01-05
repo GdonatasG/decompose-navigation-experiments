@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.retainedComponent
-import navigation.DefaultRootComponent
+import presentation.navigation.DefaultRootComponent
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalDecomposeApi::class)
