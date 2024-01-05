@@ -1,5 +1,5 @@
 package navigation.main.home
 
-interface HomeScreenComponent {
+interface HomeComponent {
     fun onLogout()
 }

@@ -8,15 +8,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -24,14 +24,14 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
-import navigation.main.tabs.MainBottomTabsScreenComponent
+import navigation.main.tabs.MainBottomTabsComponent
 import screen.main.FeedScreen
 import screen.main.HomeScreen
 import screen.main.settings.SettingsRootScreen
 
 @Composable
-fun MainBottomTabsScreen(component: MainBottomTabsScreenComponent, modifier: Modifier = Modifier) {
-    Surface(modifier = modifier, color = MaterialTheme.colors.background) {
+fun MainBottomTabsScreen(component: MainBottomTabsComponent, modifier: Modifier = Modifier) {
+    Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -43,9 +43,9 @@ fun MainBottomTabsScreen(component: MainBottomTabsScreenComponent, modifier: Mod
                 animation = stackAnimation(fade())
             ) {
                 when (val child = it.instance) {
-                    is MainBottomTabsScreenComponent.Tab.Home -> HomeScreen(child.component)
-                    is MainBottomTabsScreenComponent.Tab.Feed -> FeedScreen(child.component)
-                    is MainBottomTabsScreenComponent.Tab.Settings -> SettingsRootScreen(child.component)
+                    is MainBottomTabsComponent.Tab.Home -> HomeScreen(child.component)
+                    is MainBottomTabsComponent.Tab.Feed -> FeedScreen(child.component)
+                    is MainBottomTabsComponent.Tab.Settings -> SettingsRootScreen(child.component)
                 }
             }
             BottomBar(component = component, modifier = Modifier.fillMaxWidth())
@@ -55,15 +55,15 @@ fun MainBottomTabsScreen(component: MainBottomTabsScreenComponent, modifier: Mod
 
 @Composable
 private fun BottomBar(
-    component: MainBottomTabsScreenComponent,
+    component: MainBottomTabsComponent,
     modifier: Modifier
 ) {
     val childStack by component.childStack.subscribeAsState()
     val activeComponent = childStack.active.instance
 
-    BottomNavigation(modifier = modifier) {
-        BottomNavigationItem(
-            selected = activeComponent is MainBottomTabsScreenComponent.Tab.Home,
+    NavigationBar(modifier = modifier) {
+        NavigationBarItem(
+            selected = activeComponent is MainBottomTabsComponent.Tab.Home,
             onClick = component::onHomeTabClicked,
             icon = {
                 Icon(
@@ -72,8 +72,8 @@ private fun BottomBar(
                 )
             }
         )
-        BottomNavigationItem(
-            selected = activeComponent is MainBottomTabsScreenComponent.Tab.Feed,
+        NavigationBarItem(
+            selected = activeComponent is MainBottomTabsComponent.Tab.Feed,
             onClick = component::onFeedTabClicked,
             icon = {
                 Icon(
@@ -82,8 +82,8 @@ private fun BottomBar(
                 )
             }
         )
-        BottomNavigationItem(
-            selected = activeComponent is MainBottomTabsScreenComponent.Tab.Settings,
+        NavigationBarItem(
+            selected = activeComponent is MainBottomTabsComponent.Tab.Settings,
             onClick = component::onSettingsTabClicked,
             icon = {
                 Icon(

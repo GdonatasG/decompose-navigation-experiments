@@ -1,6 +1,6 @@
 package navigation.main.settings
 
-interface SettingsScreenComponent {
+interface SettingsComponent {
     fun onLogout()
     fun onSelectTheme()
 }

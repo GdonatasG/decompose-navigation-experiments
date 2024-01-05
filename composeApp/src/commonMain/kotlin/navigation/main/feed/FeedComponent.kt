@@ -1,6 +1,6 @@
 package navigation.main.feed
 
-interface FeedScreenComponent {
+interface FeedComponent {
     fun onLogout()
     fun onDetails(id: Long)
 }

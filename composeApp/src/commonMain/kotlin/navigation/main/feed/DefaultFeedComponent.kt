@@ -2,10 +2,10 @@ package navigation.main.feed
 
 import com.arkivanov.decompose.ComponentContext
 
-class DefaultFeedScreenComponent(
+class DefaultFeedComponent(
     componentContext: ComponentContext,
     private val delegate: Delegate
-) : FeedScreenComponent, ComponentContext by componentContext {
+) : FeedComponent, ComponentContext by componentContext {
     override fun onLogout() {
         delegate.onLogout()
     }

@@ -2,11 +2,11 @@ package navigation.main.settings
 
 import com.arkivanov.decompose.ComponentContext
 
-class DefaultSettingsScreenComponent(
+class DefaultSettingsComponent(
     componentContext: ComponentContext,
     private val onSelectThemeCallback: () -> Unit,
     private val onLogoutCallback: () -> Unit
-) : SettingsScreenComponent, ComponentContext by componentContext {
+) : SettingsComponent, ComponentContext by componentContext {
 
     override fun onSelectTheme() {
         onSelectThemeCallback()

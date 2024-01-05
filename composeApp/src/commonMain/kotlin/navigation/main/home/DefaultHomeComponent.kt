@@ -2,10 +2,10 @@ package navigation.main.home
 
 import com.arkivanov.decompose.ComponentContext
 
-class DefaultHomeScreenComponent(
+class DefaultHomeComponent(
     componentContext: ComponentContext,
     private val onLogoutCallback: () -> Unit
-) : HomeScreenComponent, ComponentContext by componentContext {
+) : HomeComponent, ComponentContext by componentContext {
     override fun onLogout() {
         onLogoutCallback()
     }

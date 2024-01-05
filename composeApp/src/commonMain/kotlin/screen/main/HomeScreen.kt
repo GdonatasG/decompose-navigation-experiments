@@ -1,38 +1,41 @@
 package screen.main
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import navigation.main.home.HomeScreenComponent
+import navigation.main.home.HomeComponent
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    component: HomeScreenComponent
+    component: HomeComponent
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        TopAppBar(
-            title = { Text("Home") },
-            actions = {
-                IconButton(onClick = component::onLogout) {
-                    Icon(imageVector = Icons.Default.ExitToApp, contentDescription = "Logout")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Home") },
+                actions = {
+                    IconButton(onClick = component::onLogout) {
+                        Icon(imageVector = Icons.Default.ExitToApp, contentDescription = "Logout")
+                    }
                 }
+            )
+        }
+    ) {
+        LazyColumn(modifier = Modifier.padding(it)) {
+            items(100) { index ->
+                Text(modifier = Modifier.fillMaxWidth(), text = "Item$index")
             }
-        )
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text("Home Screen")
         }
     }
 }

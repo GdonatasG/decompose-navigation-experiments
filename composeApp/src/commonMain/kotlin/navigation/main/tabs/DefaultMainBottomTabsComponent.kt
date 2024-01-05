@@ -9,17 +9,17 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.webhistory.WebHistoryController
 import com.arkivanov.decompose.value.Value
 import kotlinx.serialization.Serializable
-import navigation.main.feed.DefaultFeedScreenComponent
-import navigation.main.home.DefaultHomeScreenComponent
-import navigation.main.settings.DefaultSettingsScreenRootComponent
+import navigation.main.feed.DefaultFeedComponent
+import navigation.main.home.DefaultHomeComponent
+import navigation.main.settings.DefaultSettingsRootComponent
 
 @OptIn(ExperimentalDecomposeApi::class)
-class DefaultMainBottomTabsScreenComponent(
+class DefaultMainBottomTabsComponent(
     componentContext: ComponentContext,
     deepLink: DeepLink = DeepLink.None,
     webHistoryController: WebHistoryController? = null,
     private val delegate: Delegate
-) : MainBottomTabsScreenComponent, ComponentContext by componentContext {
+) : MainBottomTabsComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
 
@@ -34,18 +34,18 @@ class DefaultMainBottomTabsScreenComponent(
         childFactory = ::child,
     )
 
-    override val childStack: Value<ChildStack<*, MainBottomTabsScreenComponent.Tab>> = stack
+    override val childStack: Value<ChildStack<*, MainBottomTabsComponent.Tab>> = stack
 
     init {
         webHistoryController?.attach(
             navigator = navigation,
             stack = stack,
-            getPath = ::getPathForConfig,
-            getConfiguration = ::getConfigForPath,
+            getPath = Companion::getPathForConfig,
+            getConfiguration = Companion::getConfigForPath,
         )
     }
 
-    private fun onLogout() {
+    private fun logout() {
         delegate.onLogout()
     }
 
@@ -65,30 +65,32 @@ class DefaultMainBottomTabsScreenComponent(
         navigation.bringToFront(Config.Settings)
     }
 
-    private fun child(config: Config, componentContext: ComponentContext): MainBottomTabsScreenComponent.Tab =
+    private fun child(config: Config, componentContext: ComponentContext): MainBottomTabsComponent.Tab =
         when (config) {
-            is Config.Home -> MainBottomTabsScreenComponent.Tab.Home(
-                component = DefaultHomeScreenComponent(
+            is Config.Home -> MainBottomTabsComponent.Tab.Home(
+                component = DefaultHomeComponent(
                     componentContext = componentContext,
-                    onLogoutCallback = { onLogout() })
+                    onLogoutCallback = { logout() })
             )
 
-            is Config.Feed -> MainBottomTabsScreenComponent.Tab.Feed(component = DefaultFeedScreenComponent(componentContext = componentContext,
-                delegate = object : DefaultFeedScreenComponent.Delegate {
-                    override fun onLogout() {
-                        onLogout()
-                    }
+            is Config.Feed -> MainBottomTabsComponent.Tab.Feed(
+                component = DefaultFeedComponent(componentContext = componentContext,
+                    delegate = object : DefaultFeedComponent.Delegate {
+                        override fun onLogout() {
+                            logout()
+                        }
 
-                    override fun onDetails(id: Long) {
-                        delegate.onFeedDetails(id = id)
-                    }
+                        override fun onDetails(id: Long) {
+                            delegate.onFeedDetails(id = id)
+                        }
 
-                }))
+                    })
+            )
 
-            is Config.Settings -> MainBottomTabsScreenComponent.Tab.Settings(
-                component = DefaultSettingsScreenRootComponent(
+            is Config.Settings -> MainBottomTabsComponent.Tab.Settings(
+                component = DefaultSettingsRootComponent(
                     componentContext = componentContext,
-                    onLogoutCallback = { onLogout() })
+                    onLogoutCallback = { logout() })
             )
         }
 
@@ -110,7 +112,7 @@ class DefaultMainBottomTabsScreenComponent(
         private const val WEB_PATH_SETTINGS = "settings"
 
         private fun getInitialStack(webHistoryPaths: List<String>?, deepLink: DeepLink): List<Config> =
-            webHistoryPaths?.takeUnless(List<*>::isEmpty)?.map(::getConfigForPath) ?: getInitialStack(deepLink)
+            webHistoryPaths?.takeUnless(List<*>::isEmpty)?.map(Companion::getConfigForPath) ?: getInitialStack(deepLink)
 
         private fun getInitialStack(deepLink: DeepLink): List<Config> = when (deepLink) {
             is DeepLink.None -> listOf(Config.Home)

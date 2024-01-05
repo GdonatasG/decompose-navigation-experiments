@@ -10,14 +10,14 @@ import com.arkivanov.decompose.router.stack.webhistory.WebHistoryController
 import com.arkivanov.decompose.value.Value
 import kotlinx.serialization.Serializable
 import navigation.auth.DefaultAuthScreenComponent
-import navigation.main.DefaultMainScreenComponent
+import navigation.main.DefaultMainComponent
 
 @OptIn(ExperimentalDecomposeApi::class)
-class DefaultRootScreenComponent(
+class DefaultRootComponent(
     componentContext: ComponentContext,
     deepLink: DeepLink = DeepLink.None,
     webHistoryController: WebHistoryController? = null,
-) : RootScreenComponent, ComponentContext by componentContext {
+) : RootComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
 
@@ -31,26 +31,28 @@ class DefaultRootScreenComponent(
         },
         childFactory = ::child,
     )
-    override val childStack: Value<ChildStack<*, RootScreenComponent.Config>> = stack
+    override val childStack: Value<ChildStack<*, RootComponent.Config>> = stack
 
     init {
         webHistoryController?.attach(
             navigator = navigation,
             stack = stack,
-            getPath = ::getPathForConfig,
-            getConfiguration = ::getConfigForPath,
+            getPath = Companion::getPathForConfig,
+            getConfiguration = Companion::getConfigForPath,
         )
     }
 
-    private fun child(config: Config, componentContext: ComponentContext): RootScreenComponent.Config = when (config) {
-        is Config.Auth -> RootScreenComponent.Config.Auth(
-            component = DefaultAuthScreenComponent(componentContext = componentContext, onAuthenticatedCallback = {
-                navigation.replaceAll(Config.Main)
-            })
+    private fun child(config: Config, componentContext: ComponentContext): RootComponent.Config = when (config) {
+        is Config.Auth -> RootComponent.Config.Auth(
+            component = DefaultAuthScreenComponent(
+                componentContext = componentContext,
+                onAuthenticatedCallback = {
+                    navigation.replaceAll(Config.Main)
+                })
         )
 
-        is Config.Main -> RootScreenComponent.Config.Main(
-            component = DefaultMainScreenComponent(
+        is Config.Main -> RootComponent.Config.Main(
+            component = DefaultMainComponent(
                 componentContext = componentContext,
                 onLogoutCallback = {
                     navigation.replaceAll(Config.Auth)
@@ -74,7 +76,7 @@ class DefaultRootScreenComponent(
         private fun getInitialStack(
             webHistoryPaths: List<String>?, deepLink: DeepLink
         ): List<Config> =
-            webHistoryPaths?.takeUnless(List<*>::isEmpty)?.map(::getConfigForPath) ?: getInitialStack(deepLink)
+            webHistoryPaths?.takeUnless(List<*>::isEmpty)?.map(Companion::getConfigForPath) ?: getInitialStack(deepLink)
 
         private fun getInitialStack(deepLink: DeepLink): List<Config> = when (deepLink) {
             is DeepLink.None -> listOf(Config.Auth)

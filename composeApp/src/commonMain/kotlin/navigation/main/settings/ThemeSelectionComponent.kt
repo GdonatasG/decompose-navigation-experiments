@@ -1,5 +1,5 @@
 package navigation.main.settings
 
-interface ThemeSelectionScreenComponent {
+interface ThemeSelectionComponent {
     fun onBack()
 }

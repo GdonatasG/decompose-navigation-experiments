@@ -9,9 +9,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import utils.lifecycleCoroutineScope
 
-class DefaultFeedDetailsScreenComponent(
+class DefaultFeedDetailsComponent(
     componentContext: ComponentContext, private val onBackCallback: () -> Unit
-) : FeedDetailsScreenComponent, ComponentContext by componentContext {
+) : FeedDetailsComponent, ComponentContext by componentContext {
     private val scope = lifecycleCoroutineScope()
 
     private val _count: MutableStateFlow<Int> = MutableStateFlow(0)

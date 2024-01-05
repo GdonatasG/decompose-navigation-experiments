@@ -13,12 +13,12 @@ import kotlinx.serialization.Serializable
 import navigation.DeepLink
 
 @OptIn(ExperimentalDecomposeApi::class)
-class DefaultSettingsScreenRootComponent(
+class DefaultSettingsRootComponent(
     componentContext: ComponentContext,
     deepLink: DeepLink = DeepLink.None,
     webHistoryController: WebHistoryController? = null,
     private val onLogoutCallback: () -> Unit
-) : SettingsScreenRootComponent, ComponentContext by componentContext {
+) : SettingsRootComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
 
@@ -36,10 +36,10 @@ class DefaultSettingsScreenRootComponent(
             childFactory = ::child,
         )
 
-    private fun child(config: Config, componentContext: ComponentContext): SettingsScreenRootComponent.Config =
+    private fun child(config: Config, componentContext: ComponentContext): SettingsRootComponent.Config =
         when (config) {
-            is Config.Settings -> SettingsScreenRootComponent.Config.Settings(
-                component = DefaultSettingsScreenComponent(
+            is Config.Settings -> SettingsRootComponent.Config.Settings(
+                component = DefaultSettingsComponent(
                     componentContext = componentContext,
                     onSelectThemeCallback = {
                         navigation.pushNew(Config.ThemeSelection)
@@ -48,8 +48,8 @@ class DefaultSettingsScreenRootComponent(
                 )
             )
 
-            is Config.ThemeSelection -> SettingsScreenRootComponent.Config.ThemeSelection(
-                component = DefaultThemeSelectionScreenComponent(
+            is Config.ThemeSelection -> SettingsRootComponent.Config.ThemeSelection(
+                component = DefaultThemeSelectionComponent(
                     componentContext = componentContext,
                     onBackCallback = {
                         navigation.pop()
@@ -58,14 +58,14 @@ class DefaultSettingsScreenRootComponent(
             )
         }
 
-    override val childStack: Value<ChildStack<*, SettingsScreenRootComponent.Config>> = stack
+    override val childStack: Value<ChildStack<*, SettingsRootComponent.Config>> = stack
 
     init {
         webHistoryController?.attach(
             navigator = navigation,
             stack = stack,
-            getPath = ::getPathForConfig,
-            getConfiguration = ::getConfigForPath,
+            getPath = Companion::getPathForConfig,
+            getConfiguration = Companion::getConfigForPath,
         )
     }
 
@@ -76,7 +76,7 @@ class DefaultSettingsScreenRootComponent(
         private fun getInitialStack(webHistoryPaths: List<String>?, deepLink: DeepLink): List<Config> =
             webHistoryPaths
                 ?.takeUnless(List<*>::isEmpty)
-                ?.map(::getConfigForPath)
+                ?.map(Companion::getConfigForPath)
                 ?: getInitialStack(deepLink)
 
         private fun getInitialStack(deepLink: DeepLink): List<Config> =

@@ -9,17 +9,18 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.webhistory.WebHistoryController
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import kotlinx.serialization.Serializable
-import navigation.main.feed_details.DefaultFeedDetailsScreenComponent
-import navigation.main.tabs.DefaultMainBottomTabsScreenComponent
+import navigation.main.feed_details.DefaultFeedDetailsComponent
+import navigation.main.tabs.DefaultMainBottomTabsComponent
 
 @OptIn(ExperimentalDecomposeApi::class)
-class DefaultMainScreenComponent(
+class DefaultMainComponent(
     componentContext: ComponentContext,
     deepLink: DeepLink = DeepLink.None,
     webHistoryController: WebHistoryController? = null,
     private val onLogoutCallback: () -> Unit
-) : MainScreenComponent, ComponentContext by componentContext {
+) : MainComponent, ComponentContext by componentContext, BackHandlerOwner {
     private val navigation = StackNavigation<Config>()
 
     private val stack = childStack(
@@ -30,26 +31,29 @@ class DefaultMainScreenComponent(
                 webHistoryPaths = webHistoryController?.historyPaths, deepLink = deepLink
             )
         },
-        handleBackButton = true,
         childFactory = ::child,
     )
 
-    override val childStack: Value<ChildStack<*, MainScreenComponent.Config>> = stack
+    override val childStack: Value<ChildStack<*, MainComponent.Config>> = stack
 
     init {
         webHistoryController?.attach(
             navigator = navigation,
             stack = stack,
-            getPath = ::getPathForConfig,
-            getConfiguration = ::getConfigForPath,
+            getPath = Companion::getPathForConfig,
+            getConfiguration = Companion::getConfigForPath,
         )
     }
 
-    private fun child(config: Config, componentContext: ComponentContext): MainScreenComponent.Config = when (config) {
-        is Config.MainTabs -> MainScreenComponent.Config.Tabs(
-            component = DefaultMainBottomTabsScreenComponent(
+    override fun onBackPressed() {
+        navigation.pop()
+    }
+
+    private fun child(config: Config, componentContext: ComponentContext): MainComponent.Config = when (config) {
+        is Config.MainTabs -> MainComponent.Config.Tabs(
+            component = DefaultMainBottomTabsComponent(
                 componentContext = componentContext,
-                delegate = object : DefaultMainBottomTabsScreenComponent.Delegate {
+                delegate = object : DefaultMainBottomTabsComponent.Delegate {
                     override fun onLogout() {
                         onLogoutCallback()
                     }
@@ -61,10 +65,11 @@ class DefaultMainScreenComponent(
                 })
         )
 
-        is Config.FeedDetails -> MainScreenComponent.Config.FeedDetails(
-            component = DefaultFeedDetailsScreenComponent(
+        is Config.FeedDetails -> MainComponent.Config.FeedDetails(
+            component = DefaultFeedDetailsComponent(
                 componentContext = componentContext,
-                onBackCallback = { navigation.pop() })
+                onBackCallback = ::onBackPressed
+            )
         )
 
     }
@@ -80,13 +85,12 @@ class DefaultMainScreenComponent(
 
     private companion object {
         private const val WEB_PATH_MAIN_TABS = ""
-        private const val WEB_PATH_AUTH = "auth"
         private const val WEB_PATH_FEED_DETAILS = "feed"
 
         private fun getInitialStack(
             webHistoryPaths: List<String>?, deepLink: DeepLink
         ): List<Config> =
-            webHistoryPaths?.takeUnless(List<*>::isEmpty)?.map(::getConfigForPath) ?: getInitialStack(deepLink)
+            webHistoryPaths?.takeUnless(List<*>::isEmpty)?.map(Companion::getConfigForPath) ?: getInitialStack(deepLink)
 
         private fun getInitialStack(deepLink: DeepLink): List<Config> = when (deepLink) {
             is DeepLink.None -> listOf(Config.MainTabs)
